@@ -19,9 +19,7 @@ const int Servo_Left_Angle = 180;
 
 const int ChipSelect = 53;
 
-int GPS_State = 0;
 
-int GPS_Count = 0;
 #define Trig_Pin  14
 #define Echo_Pin  13
 
@@ -31,12 +29,15 @@ int GPS_Count = 0;
 #define GPS_RXPin 12
 #define GPS_TXPin 13
 
-int Buzzer = 5;
+#define Buzzer 5
 #define ModePin A0
+
+int GPS_State = 0;
+int GPS_Count = 0;
+int MaxDistance = 350;
+
 // undefined or comment it to hide Serial Data
 #define DEBUG
-
-int MaxDistance = 350;
 
 
 SoftwareSerial Bluetooth (BluetoothRXPin, BluetoothTXPin);
@@ -46,6 +47,7 @@ Servo servo;
 TinyGPSPlus GPS;
 
 File DataFile;
+
 #include "classes.h"
 
 RobotMotors Motors;
@@ -57,8 +59,9 @@ ExplorerMode Explorer;
 BluetoothControl BluetoothMode;
 
 GPS_Control GPS_Logging;
+
 void setup() {    // Setup
-  
+
 #ifdef DEBUG
   Serial.begin(9600);
 #endif
@@ -140,7 +143,7 @@ GPSCheck:     // goto label
 
 
 void loop() {         //Loop
-  
+
   int ModePinData = map(analogRead(ModePin), 1023, 0, 1000, 0);
 
   if (ModePinData < 500) {
@@ -148,7 +151,8 @@ void loop() {         //Loop
     Explorer.StartExplorer();
   } else {
     BuzzerSound();
-    BluetoothMode.StartBluetoothAndSensorsMode();
+    Sounds.StartSoundSensor();
+    BluetoothMode.StartBluetoothMode();
   }
 }
 
