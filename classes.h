@@ -8,12 +8,13 @@ class GPS_Control {
       }
 
       if (GPS.location.isUpdated()) {
+        DataFile.println("GPS Location Link: ");
         DataFile.print("https://www.google.com/maps/place/");   // lat then lng
         DataFile.print(GPS.location.lat(), 6);
         DataFile.print(",");
         DataFile.println(GPS.location.lng(), 6);
         DataFile.println();
-
+        Serial.println("GPS Location Link:  ");
         Serial.print("https://www.google.com/maps/place/");   // lat then lng
         Serial.print(GPS.location.lat(), 6);
         Serial.print(",");
@@ -138,10 +139,11 @@ class RobotMotors {
 
 
 class RobotSounds {
-
+    RobotMotors Motors;
+ 
   public:
     const int SoundSensorPin = 4;
-    const int Buzzer = 5;
+
 
     void Begin() {
       pinMode(SoundSensorPin, INPUT);
@@ -157,17 +159,24 @@ class RobotSounds {
     }
 
 
-    int SoundSensor() {
+    boolean GetSoundSensorData() {
       boolean SoundReading = map(digitalRead(SoundSensorPin), HIGH, LOW, false, true);
 
       return SoundReading;
     }
 
+    void StartSoundSensor() {
+      boolean Sound = GetSoundSensorData();
+      if (Sound == true) {
+        Motors.MoveRandom();
+      }
+    }
 };
 
 
 class ExplorerMode {
     RobotMotors Motors;
+
   public:
 
     int distance = 0;
@@ -184,8 +193,12 @@ class ExplorerMode {
     }
 
     void StartExplorer() {
+
+      distance = ReadPing();
+
       int distanceR = 0;
       int distanceL = 0;
+
       delay(70);
 
       if (distance < 30) {
@@ -217,7 +230,7 @@ class ExplorerMode {
     int ReadPing() {
       int cm = sonar.ping_cm();
       if (cm = 0) {
-        return 400;
+        return 350;
       } else {
         return cm;
       }
@@ -257,17 +270,13 @@ class BluetoothControl {
       Bluetooth.begin(BaudRate);
     }
 
-    void StartBluetoothAndSensorsMode() {
+    void StartBluetoothMode() {
 
-      boolean Sound = Sounds.SoundSensor();
-      if (Sound == true) {
-        Motors.MoveRandom();
-      }
 
       while (Bluetooth.available() > 0) {
         c = Bluetooth.read();
         delay(10);
-        Command += c;
+        Command = Command + c;
       }
 
       switch (c) {
@@ -289,13 +298,17 @@ class BluetoothControl {
 
         case 'S':
           Motors.Move('S');
+
 GPS_Check:
+
           GPS_Log.GPSLog();
+
           if (GPS_State == 0) {
+
             goto GPS_Check;
           }
-          break;
 
+          break;
       }
 
 
