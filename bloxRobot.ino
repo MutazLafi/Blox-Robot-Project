@@ -35,6 +35,7 @@ const int ChipSelect = 53;
 int GPS_State = 0;
 int GPS_Count = 0;
 boolean SD_State = false;
+String Mode_State = "";
 int MaxDistance = 350;
 
 #define DEBUG    // undefined or comment it to hide Serial Data
@@ -49,7 +50,9 @@ Servo servo;
 
 TinyGPSPlus GPS;
 
+
 #include "classes.h"
+
 RobotMotors Motors;
 
 RobotSounds Sounds;
@@ -75,7 +78,7 @@ void setup() {    // Setup
     Serial.println("Error opening SD card.");
     delay(2000);
     ErrorSound();
-
+    while(true);
 
   } else {
     Serial.println("SD Card opened. ");
@@ -162,15 +165,15 @@ void loop() {         //Loop
   int ExplorerModeRead = digitalRead(ExplorerButton);
   int SensorsModeRead = digitalRead(SensorsButton);
 
-  DataFile.print("The Mode Pin is On: ");
-
-  DataFile.print("In Mode: ");
+  DataFile.print("The Program In Mode:  ");
   if (ExplorerModeRead == HIGH) {
     DataFile.println("Explorer Mode");
+    Mode_State = "Explorer";
     Explorer.StartExplorer();
   }
   if (SensorsModeRead == HIGH) {
     DataFile.println("Bluetooth And Sensors Mode");
+    Mode_State = "Sensors";
     Sounds.StartSoundSensor();
     BluetoothMode.StartBluetoothMode();
   }
