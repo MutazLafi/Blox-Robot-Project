@@ -1,5 +1,6 @@
-
+File DataFile = SD.open("ROBOT.TXT");
 class GPS_Control {
+
   public:
 
     void GPSLog() {
@@ -30,7 +31,8 @@ class GPS_Control {
 
 
 class RobotMotors {
-
+    GPS_Control GPS_Data;
+     
   private:
     int MotorPin1 = 6;
     int MotorPin2 = 7;
@@ -129,9 +131,27 @@ class RobotMotors {
           digitalWrite(MotorPin2, LOW);
           digitalWrite(MotorPin3, LOW);
           digitalWrite(MotorPin4, LOW);
+
+GPS_Logging_Check:
+
+          GPS_Data.GPSLog();
+
+          if (GPS_State == 0) {
+            Serial.println("GPS DATA NOT DETECTED");
+            Serial.println(GPS_State);
+            GPS_Count++;
+            delay(100);
+
+            if (GPS_Count == 300) {
+              Serial.print("GPS DATA WAS UNABLE TO BE DETECTED");
+              DataFile.println("GPS DATA WAS UNABLE TO BE DETECTED");
+              DataFile.close();
+
+            }
+            goto GPS_Logging_Check;
+          }
+
           break;
-
-
       }
     }
 };
@@ -140,23 +160,16 @@ class RobotMotors {
 
 class RobotSounds {
     RobotMotors Motors;
- 
+
   public:
     const int SoundSensorPin = 4;
 
 
     void Begin() {
       pinMode(SoundSensorPin, INPUT);
-
       pinMode(Buzzer, OUTPUT);
     }
 
-    void ErrorSound() {
-      digitalWrite(Buzzer, HIGH);
-      delay(2000);
-      digitalWrite(Buzzer, LOW);
-      delay(1000);
-    }
 
 
     boolean GetSoundSensorData() {
