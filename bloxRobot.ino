@@ -10,7 +10,6 @@
 
 #include <SD.h>
 
-
 const int ServoPin = 2;
 
 const int Servo_Right_Angle = 0;
@@ -30,7 +29,8 @@ const int ChipSelect = 53;
 #define GPS_TXPin 13
 
 #define Buzzer 5
-#define ModePin A0
+#define SensorsButton 48
+#define ExplorerButton 49
 
 int GPS_State = 0;
 int GPS_Count = 0;
@@ -69,6 +69,8 @@ void setup() {    // Setup
 #endif
 
   pinMode(Buzzer, OUTPUT);
+  pinMode(SensorsButton, INPUT_PULLUP);
+  pinMode(ExplorerButton, INPUT_PULLUP);
 
   if (!SD.begin(ChipSelect)) {
     BuzzerSound();
@@ -153,18 +155,23 @@ GPSCheck:             // goto label
 
 void loop() {         //Loop
   if (SD_State == false) {
+
     File DataFile = SD.open("ROBOT.TXT");
+
     SD_State = true;
   }
-  int ModePinData = map(analogRead(ModePin), 1023, 0, 1000, 0);
+
+  int ExplorerModeRead = digitalRead(ExplorerButton);
+  int SensorsModeRead = digitalRead(SensorsButton);
 
   DataFile.print("The Mode Pin is On: ");
-  DataFile.println(ModePinData);
+
   DataFile.print("In Mode: ");
-  if (ModePinData < 500) {
+  if (ExplorerModeRead == HIGH) {
     DataFile.println("Explorer Mode");
     Explorer.StartExplorer();
-  } else {
+  }
+  if (SensorsModeRead == HIGH) {
     DataFile.println("Bluetooth And Sensors Mode");
     Sounds.StartSoundSensor();
     BluetoothMode.StartBluetoothMode();
