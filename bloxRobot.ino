@@ -49,9 +49,7 @@ Servo servo;
 
 TinyGPSPlus GPS;
 
-
 #include "classes.h"
-
 RobotMotors Motors;
 
 RobotSounds Sounds;
