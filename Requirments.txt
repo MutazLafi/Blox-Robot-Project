@@ -1,0 +1,40 @@
+Things Needed In The Robot :
+
+Arduino Mega 2560 Microcontroller
+
+H-Bridge 2 Motors
+
+3 Batterys Li-ON 18650
+
+Li-on 3 btttery Holder
+
+wires male to male and female to male
+
+Chase 4 wheels
+
+2 Buttons
+
+Little breadboard
+
+
+Small breadboard
+
+Servo
+
+Ultrasonic
+
+Ublox 6 neom with anttena (GPS Module)
+
+Bluetooth HC-6 Module
+
+T2N5 Sound Sensor Module
+
+Micro SD Card Module
+
+switch 
+
+You Can Find These componets in :
+
+Mikroelectron.com
+
+in jordan
