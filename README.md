@@ -23,7 +23,7 @@ with battery holder.
 
 
 <h1>Requirments To Build It </h1>
-<p>All The Requirments Of The Robot You can Find it in The File https://github.com/MutazLafi/Blox-Robot-Project/blob/master/Requirments.txt 
+<p>All The Requirments Of The Robot You can Find it in The File Requirements.txt https://github.com/MutazLafi/Blox-Robot-Project/blob/master/Requirments.txt 
 You Can Find These Parts In MikroElectron in Jordan
 </p>
 
