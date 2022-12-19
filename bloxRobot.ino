@@ -18,6 +18,7 @@ const int Servo_Left_Angle = 180;
 
 const int ChipSelect = 53;
 
+const int MaxDistance = 350;
 
 #define Trig_Pin  14
 #define Echo_Pin  13
@@ -28,17 +29,21 @@ const int ChipSelect = 53;
 #define GPS_RXPin 12
 #define GPS_TXPin 13
 
-#define Buzzer 5
+#define Buzzer 47
+#define IR_Pin 16
 #define SensorsButton 48
 #define ExplorerButton 49
+#define SpeedPotPin A0
 
 int GPS_State = 0;
 int GPS_Count = 0;
+int ButtonState = 3;  // 1 Explorer 2 Sensor Mode
+
 boolean SD_State = false;
 String Mode_State = "";
-int MaxDistance = 350;
 
-#define DEBUG    // undefined or comment it to hide Serial Data
+
+#define DEBUG    // Unefined or Comment it To Hide Serial Data
 
 SoftwareSerial Bluetooth (BluetoothRXPin, BluetoothTXPin);
 
@@ -72,13 +77,13 @@ void setup() {    // Setup
   pinMode(Buzzer, OUTPUT);
   pinMode(SensorsButton, INPUT_PULLUP);
   pinMode(ExplorerButton, INPUT_PULLUP);
+  pinMode(IR_Pin, INPUT);
 
   if (!SD.begin(ChipSelect)) {
-    BuzzerSound();
     Serial.println("Error opening SD card.");
     delay(2000);
     ErrorSound();
-    while(true);
+    while (true);
 
   } else {
     Serial.println("SD Card opened. ");
@@ -94,14 +99,15 @@ void setup() {    // Setup
     ErrorSound();
     while (true);
   }
-  BuzzerSound();
+
+
   DataFile.println("Robot Blox By Mutaz Lafi Data File. ");
 
   Serial.println("Robot Starting....");
 
   DataFile.println("Robot Starting....");
   delay(1000);
-  BuzzerSound();
+
   BluetoothMode.Begin(9600);
   servo.attach(ServoPin);
   pinMode(Buzzer, OUTPUT);
@@ -127,6 +133,8 @@ void setup() {    // Setup
   Serial.println("AL Sensors And Modules Started in The Robot.");
   DataFile.println("AL Sensors And Modules Started in The Robot.");
 
+  BuzzerSound();
+
 GPSCheck:             // goto label
 
   GPS_Logging.GPSLog();
@@ -137,6 +145,7 @@ GPSCheck:             // goto label
     GPS_Count++;
     delay(100);
     Serial.print(GPS_Count);
+
     if (GPS_Count >= 500) {
       Serial.print("GPS DATA WAS UNABLE TO BE DETECTED");
       DataFile.println("GPS DATA WAS UNABLE TO BE DETECTED");
@@ -155,6 +164,7 @@ GPSCheck:             // goto label
 
 
 void loop() {         //Loop
+
   if (SD_State == false) {
 
     File DataFile = SD.open("ROBOT.TXT");
@@ -162,21 +172,40 @@ void loop() {         //Loop
     SD_State = true;
   }
 
+  int SpeedPinReading = map(analogRead(SpeedPotPin), 1023, 0, 255, 0);
+
   int ExplorerModeRead = digitalRead(ExplorerButton);
   int SensorsModeRead = digitalRead(SensorsButton);
 
+  Motors.setSpeed(SpeedPinReading);
+
   DataFile.print("The Program In Mode:  ");
+
   if (ExplorerModeRead == HIGH) {
-    DataFile.println("Explorer Mode");
-    Mode_State = "Explorer";
-    Explorer.StartExplorer();
+
+    ButtonState = 1;
   }
   if (SensorsModeRead == HIGH) {
+
+    ButtonState = 2;
+  }
+
+  if (ButtonState == 1) {
+
+    DataFile.println("Explorer Mode");
+    Explorer.StartExplorer();
+  }
+
+  if (ButtonState == 2) {
     DataFile.println("Bluetooth And Sensors Mode");
     Mode_State = "Sensors";
+
     Sounds.StartSoundSensor();
+
     BluetoothMode.StartBluetoothMode();
+
   }
+
   DataFile.close();
 }
 

@@ -1,4 +1,6 @@
+
 File DataFile = SD.open("ROBOT.TXT");
+
 class GPS_Control {
 
   public:
@@ -32,12 +34,14 @@ class GPS_Control {
 
 class RobotMotors {
     GPS_Control GPS_Data;
-     
+
   private:
-    int MotorPin1 = 6;
-    int MotorPin2 = 7;
-    int MotorPin3 = 8;
-    int MotorPin4 = 9;
+    const int MotorPin1 = 6;
+    const int MotorPin2 = 7;
+    const int MotorPin3 = 8;
+    const int MotorPin4 = 9;
+    const int ENA = 3;
+    const int ENB = 5;
 
   public:
     void Begin() {
@@ -45,6 +49,12 @@ class RobotMotors {
       pinMode(MotorPin2, OUTPUT);
       pinMode(MotorPin3, OUTPUT);
       pinMode(MotorPin4, OUTPUT);
+      pinMode(ENA, OUTPUT);
+      pinMode(ENB, OUTPUT);
+    }
+    void setSpeed(int Speed) {
+      analogWrite(ENA, Speed);
+      analogWrite(ENB, Speed);
     }
 
     void MoveRandom() {
